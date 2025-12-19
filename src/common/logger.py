@@ -9,9 +9,7 @@ def get_logger(name: str):
     """
     logger = logging.getLogger(name)
     
-    # Tránh việc thêm nhiều handler nếu hàm này được gọi nhiều lần
     if not logger.handlers:
-        # Thiết lập mức độ log từ biến môi trường, mặc định là INFO
         log_level = os.getenv("LOG_LEVEL", "INFO").upper()
         logger.setLevel(log_level)
 
