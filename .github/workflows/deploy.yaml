@@ -2,7 +2,7 @@ name: Deploy Serverless RAG to AWS
 
 on:
   push:
-    branches: [ main ] # Tự động chạy khi push vào branch main
+    branches: [ master ] # Tự động chạy khi push vào branch main
 
 env:
   AWS_REGION: ap-southeast-1
