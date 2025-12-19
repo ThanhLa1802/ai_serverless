@@ -1,0 +1,52 @@
+name: Deploy Serverless RAG to AWS
+
+on:
+  push:
+    branches: [ main ] # Tự động chạy khi push vào branch main
+
+env:
+  AWS_REGION: ap-southeast-1
+  PROJECT_NAME: serverless-rag
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: latest
+        run: |
+          # Tạo repo nếu chưa có
+          aws ecr describe-repositories --repository-names ${{ env.PROJECT_NAME }} || \
+          aws ecr create-repository --repository-name ${{ env.PROJECT_NAME }}
+          
+          docker build -t $ECR_REGISTRY/${{ env.PROJECT_NAME }}:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/${{ env.PROJECT_NAME }}:$IMAGE_TAG
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Deploy
+        working-directory: ./infra
+        env:
+          TF_VAR_gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          TF_VAR_pinecone_api_key: ${{ secrets.PINECONE_API_KEY }}
+        run: |
+          terraform init
+          terraform apply -auto-approve
