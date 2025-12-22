@@ -1,14 +1,23 @@
 import base64
+import boto3
 import json
 from .parser import PDFParser
 from .embedder import IngestionService
+from src.common.logger import get_logger
+
+#use English comments
+_logger = get_logger(__name__)
+s3_client = boto3.client('s3')
 
 def handler(event, context):
     try:
-        # Lấy file base64 từ API request
-        body = json.loads(event['body'])
-        file_bytes = base64.b64decode(body['file'])
+        bucket = event['Records'][0]['s3']['bucket']['name']
+        key = event['Records'][0]['s3']['object']['key']
         
+        _logger.info(f"Processing file from S3 - Bucket: {bucket}, Key: {key}")
+        
+        file_bytes = s3_client.get_object(Bucket=bucket, Key=key)['Body'].read()
+
         # Bước 1: Trích xuất text (Dùng LangChain Loader)
         parser = PDFParser()
         docs = parser.parse_from_bytes(file_bytes)
