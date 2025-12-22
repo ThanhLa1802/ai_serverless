@@ -7,7 +7,7 @@ class AnswerGenerator:
         # Sử dụng Gemini 1.5 Flash theo sơ đồ của bạn
         self.model = genai.GenerativeModel('gemini-1.5-flash')
 
-    def generate_answer(self, question: str, context_documents: List[str]) -> str:
+    def generate_answer(self, question: str, context_documents: list) -> str:
         """
         Tạo câu trả lời dựa trên ngữ cảnh được cung cấp (RAG).
         """

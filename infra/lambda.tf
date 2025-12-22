@@ -4,7 +4,7 @@ resource "aws_ecr_repository" "app_repo" {
 }
 
 resource "aws_lambda_function" "query_handler" {
-  function_name = "query-handler"
+  function_name = "${var.project_name}-query-handler"
   role          = aws_iam_role.lambda_exec_role.arn
   package_type  = "Image"
   image_uri     = "${aws_ecr_repository.app_repo.repository_url}:latest"
@@ -13,19 +13,19 @@ resource "aws_lambda_function" "query_handler" {
     variables = {
       GEMINI_API_KEY      = var.gemini_api_key
       PINECONE_API_KEY    = var.pinecone_api_key
-      PINECONE_INDEX_NAME = "my-docs-index"
+      PINECONE_INDEX_NAME = var.pinecone_index
     }
   }
 }
 
 
 resource "aws_lambda_function" "ingest_handler" {
-  function_name = "${var.project_name}-handler"
+  function_name = "${var.project_name}-ingest-handler"
   role          = aws_iam_role.lambda_exec_role.arn
   package_type  = "Image"
   image_uri     = "${aws_ecr_repository.app_repo.repository_url}:latest"
   
-  timeout       = 30 # Tăng timeout vì xử lý LLM tốn thời gian
+  timeout       = 300 # Tăng timeout vì xử lý LLM tốn thời gian
   memory_size   = 1024 # LangChain cần RAM tương đối
 
   environment {
@@ -37,7 +37,7 @@ resource "aws_lambda_function" "ingest_handler" {
   }
 }
 
-# 1. Log Group cho hàm Ingestion
+
 resource "aws_cloudwatch_log_group" "ingest_logs" {
   name              = "/aws/lambda/${aws_lambda_function.ingest_handler.function_name}"
   retention_in_days = 7 # Tự động xóa sau 7 ngày
