@@ -10,7 +10,7 @@ def get_answer_from_query(query: str) -> str:
         embedding=embeddings
     )
 
-   
+    
     relevant_docs = vector_store.similarity_search(query, k=3)
     context_list = [doc.page_content for doc in relevant_docs]
     generator = AnswerGenerator()
