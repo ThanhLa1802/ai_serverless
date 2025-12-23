@@ -47,7 +47,7 @@ jobs:
           terraform init
           # terraform import aws_ecr_repository.app_repo ${{ env.PROJECT_NAME }}
         env:
-          TF_VAR_gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          TF_VAR_groq_api_key: ${{ secrets.GROQ_API_KEY }}
           TF_VAR_pinecone_api_key: ${{ secrets.PINECONE_API_KEY }}
           TF_VAR_pinecone_index_name: ${{ secrets.PINECONE_INDEX_NAME }}
         
@@ -57,6 +57,6 @@ jobs:
           terraform init 
           terraform apply -auto-approve
         env:
-          TF_VAR_gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          TF_VAR_groq_api_key: ${{ secrets.GROQ_API_KEY }}
           TF_VAR_pinecone_api_key: ${{ secrets.PINECONE_API_KEY }}
           TF_VAR_pinecone_index_name: ${{ secrets.PINECONE_INDEX_NAME }}

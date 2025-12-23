@@ -1,40 +1,77 @@
 import json
-from src.retrieval.search import get_answer_from_query
+import os
+from .search import SearchService
+from .generator import AnswerGenerator
 from src.common.logger import get_logger
 
 _logger = get_logger(__name__)
 
-def handler(event, _context):
-    try:
-        _logger.info(f"Received event: {json.dumps(event)}")
-        # Phân giải request từ API Gateway
-        body = json.loads(event.get("body", "{}"))
-        query = body.get("question") # Hoặc query tùy bạn đặt tên bên client
+# Khởi tạo Service ngoài handler để tận dụng "Warm Start" của Lambda
+# (Giúp không phải nạp lại model HuggingFace cho mỗi request)
+search_service = None
+answer_generator = None
 
-        if not query:
+def handler(event, context):
+    global search_service, answer_generator
+    
+    _logger.info("Query handler called")
+    
+    try:
+        # 1. Khởi tạo service nếu chưa có
+        if search_service is None:
+            search_service = SearchService()
+        if answer_generator is None:
+            answer_generator = AnswerGenerator()
+
+        # 2. Lấy câu hỏi từ người dùng (hỗ trợ cả gọi trực tiếp hoặc qua API Gateway)
+        body = event.get('body', '{}')
+        if isinstance(body, str):
+            body = json.loads(body)
+            
+        query_text = body.get('query') or event.get('query')
+        
+        if not query_text:
             return {
                 "statusCode": 400,
-                "body": json.dumps({"error": "No query provided"})
+                "body": json.dumps({"error": "Missing 'query' in request body"})
             }
 
-        _logger.info(f"Processing query: {query}")
+        _logger.info(f"User Question: {query_text}")
 
-        # Gọi hàm logic của bạn
-        answer_text = get_answer_from_query(query)
+        # 3. Bước Retrieval: Tìm kiếm ngữ cảnh từ Pinecone bằng HuggingFace
+        # k=3: Lấy 3 đoạn văn liên quan nhất
+        contexts = search_service.search_context(query_text, k=3)
+        
+        if not contexts:
+            _logger.warning("No relevant context found in Pinecone.")
+            return {
+                "statusCode": 200,
+                "body": json.dumps({
+                    "answer": "Tôi không tìm thấy thông tin liên quan trong tài liệu đã upload.",
+                    "sources": []
+                })
+            }
 
+        # 4. Bước Generation: Dùng Gemini để tổng hợp câu trả lời
+        answer = answer_generator.generate_answer(query_text, contexts)
+
+        # 5. Trả về kết quả
         return {
             "statusCode": 200,
             "headers": {
                 "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*"
+                "Access-Control-Allow-Origin": "*" # Hỗ trợ gọi từ Website (CORS)
             },
             "body": json.dumps({
-                "answer": answer_text
-            })
+                "answer": answer,
+                "has_context": True,
+                "context_count": len(contexts)
+            }, ensure_ascii=False)
         }
+
     except Exception as e:
-        _logger.error(f"Error: {str(e)}", exc_info=True)
+        _logger.error(f"Error in query handler: {str(e)}", exc_info=True)
         return {
             "statusCode": 500,
-            "body": json.dumps({"error": "Internal server error"})
+            "body": json.dumps({"error": "Internal server error during query processing"})
         }

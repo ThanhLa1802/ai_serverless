@@ -1,7 +1,8 @@
-langchain==0.1.0
-langchain-google-genai
+torch
+sentence-transformers
+langchain-groq
 langchain-pinecone
 langchain-community
 pypdf
-google-genai
+boto3
 python-dotenv

@@ -15,7 +15,7 @@ resource "aws_lambda_function" "query_handler" {
 
   environment {
     variables = {
-      GEMINI_API_KEY      = var.gemini_api_key
+      GEMINI_API_KEY      = var.groq_api_key
       PINECONE_API_KEY    = var.pinecone_api_key
       PINECONE_INDEX_NAME = var.pinecone_index
       DEPLOY_TRIGGER      = timestamp() 
@@ -39,7 +39,7 @@ resource "aws_lambda_function" "ingest_handler" {
 
   environment {
     variables = {
-      GEMINI_API_KEY      = var.gemini_api_key
+      GEMINI_API_KEY      = var.groq_api_key
       PINECONE_API_KEY    = var.pinecone_api_key
       PINECONE_INDEX_NAME = var.pinecone_index
       DEPLOY_TRIGGER      = timestamp()

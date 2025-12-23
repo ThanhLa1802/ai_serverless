@@ -6,7 +6,7 @@ variable "project_name" {
   default = "serverless-rag"
 }
 
-variable "gemini_api_key" {
+variable "groq_api_key" {
   type      = string
   sensitive = true
 }

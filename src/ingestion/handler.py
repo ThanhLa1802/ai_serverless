@@ -31,14 +31,7 @@ def handler(event, _context):
         service = IngestionService()
         count = service.process_and_upload(docs)
         _logger.info(f"Uploaded {count} chunks to the vector store.")
-        return {
-            "statusCode": 200,
-            "body": json.dumps({
-                "message": "Successfully processed and uploaded embeddings.",
-                "pages_processed": len(docs),
-                "chunks_created": count
-            })
-        }
+        _logger.info("Ingestion process completed successfully.")
     except Exception as e:
-        _logger.error(f"LỖI XỬ LÝ INGESTION: {str(e)}", exc_info=True)
-        return {"statusCode": 500, "body": json.dumps({"error": str(e)})}
+        _logger.error(f"Error in ingestion handler: {str(e)}", exc_info=True)
+        raise e
