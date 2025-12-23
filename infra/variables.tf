@@ -20,3 +20,8 @@ variable "pinecone_index" {
   type    = string
   default = "document-index"
 }
+
+variable "image_tag" {
+  description = "Docker image tag"
+  type        = string
+}
