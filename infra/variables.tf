@@ -18,7 +18,7 @@ variable "pinecone_api_key" {
 
 variable "pinecone_index" {
   type    = string
-  default = "document-index"
+  default = "documents-index"
 }
 
 variable "image_tag" {

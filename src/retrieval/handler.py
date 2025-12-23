@@ -14,6 +14,9 @@ def handler(event, context):
     global search_service, answer_generator
     
     _logger.info("Query handler called")
+    _logger.info(
+    f"PINECONE_INDEX_NAME={os.getenv('PINECONE_INDEX_NAME')}"
+)
     
     try:
         # 1. Khởi tạo service nếu chưa có
