@@ -6,8 +6,7 @@ from src.common.logger import get_logger
 
 _logger = get_logger(__name__)
 
-# Khởi tạo Service ngoài handler để tận dụng "Warm Start" của Lambda
-# (Giúp không phải nạp lại model HuggingFace cho mỗi request)
+
 search_service = None
 answer_generator = None
 
@@ -38,8 +37,7 @@ def handler(event, context):
 
         _logger.info(f"User Question: {query_text}")
 
-        # 3. Bước Retrieval: Tìm kiếm ngữ cảnh từ Pinecone bằng HuggingFace
-        # k=3: Lấy 3 đoạn văn liên quan nhất
+        # 3. Bước Retrieval: Tìm context liên quan từ Pinecone
         contexts = search_service.search_context(query_text, k=3)
         
         if not contexts:
@@ -52,7 +50,7 @@ def handler(event, context):
                 })
             }
 
-        # 4. Bước Generation: Dùng Gemini để tổng hợp câu trả lời
+        # 4. Bước Generation: Dùng gloq để tạo câu trả lời
         answer = answer_generator.generate_answer(query_text, contexts)
 
         # 5. Trả về kết quả

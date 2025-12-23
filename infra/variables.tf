@@ -1,12 +1,12 @@
 variable "aws_region" {
-  default = "ap-southeast-1" # Singapore - gần Việt Nam nhất
+  default = "ap-southeast-1"
 }
 
 variable "project_name" {
   default = "serverless-rag"
 }
 
-variable "groq_api_key" {
+variable "openai_api_key" {
   type      = string
   sensitive = true
 }

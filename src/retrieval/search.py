@@ -1,15 +1,18 @@
 import os
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_pinecone import PineconeVectorStore
+from langchain_openai import OpenAIEmbeddings
 from src.common.logger import get_logger
 
 _logger = get_logger(__name__)
 
 class SearchService:
     def __init__(self):
-        # 1. BẮT BUỘC: Dùng cùng model với lúc Ingest
-        self.embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
         
+        self.embeddings = OpenAIEmbeddings(
+            model="text-embedding-3-small",
+            openai_api_key=os.getenv("OPENAI_API_KEY")
+        )
+
         # 2. Kết nối tới Pinecone
         index_name = os.getenv("PINECONE_INDEX_NAME")
         namespace = os.getenv("PINECONE_NAMESPACE", "default")

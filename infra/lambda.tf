@@ -16,7 +16,7 @@ resource "aws_lambda_function" "query_handler" {
 
   environment {
     variables = {
-      GEMINI_API_KEY      = var.groq_api_key
+      OPENAI_API_KEY      = var.openai_api_key
       PINECONE_API_KEY    = var.pinecone_api_key
       PINECONE_INDEX_NAME = var.pinecone_index
       IMAGE_TAG           = var.image_tag
@@ -40,7 +40,7 @@ resource "aws_lambda_function" "ingest_handler" {
 
   environment {
     variables = {
-      GEMINI_API_KEY      = var.groq_api_key
+      OPENAI_API_KEY      = var.openai_api_key
       PINECONE_API_KEY    = var.pinecone_api_key
       PINECONE_INDEX_NAME = var.pinecone_index
       IMAGE_TAG           = var.image_tag

@@ -1,5 +1,5 @@
 torch
-sentence-transformers
+openai>=1.0.0
 langchain-groq
 langchain-pinecone
 langchain-community
