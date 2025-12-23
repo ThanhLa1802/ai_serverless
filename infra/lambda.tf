@@ -9,11 +9,16 @@ resource "aws_lambda_function" "query_handler" {
   package_type  = "Image"
   image_uri     = "${aws_ecr_repository.app_repo.repository_url}:latest"
 
+  image_config {
+    command = ["src.retrieval.handler.handler"] 
+  }
+
   environment {
     variables = {
       GEMINI_API_KEY      = var.gemini_api_key
       PINECONE_API_KEY    = var.pinecone_api_key
       PINECONE_INDEX_NAME = var.pinecone_index
+      DEPLOY_TRIGGER      = timestamp() 
     }
   }
 }
@@ -25,14 +30,19 @@ resource "aws_lambda_function" "ingest_handler" {
   package_type  = "Image"
   image_uri     = "${aws_ecr_repository.app_repo.repository_url}:latest"
   
-  timeout       = 300 # Tăng timeout vì xử lý LLM tốn thời gian
-  memory_size   = 1024 # LangChain cần RAM tương đối
+  timeout       = 300 
+  memory_size   = 1024 
+
+  image_config {
+    command = ["src.ingestion.handler.handler"]
+  }
 
   environment {
     variables = {
       GEMINI_API_KEY      = var.gemini_api_key
       PINECONE_API_KEY    = var.pinecone_api_key
       PINECONE_INDEX_NAME = var.pinecone_index
+      DEPLOY_TRIGGER      = timestamp()
     }
   }
 }

@@ -10,7 +10,8 @@ _logger = get_logger(__name__)
 s3_client = boto3.client('s3')
 
 def handler(event, _context):
-    _logger.info(f"Received event: {json.dumps(event)}")
+    print("Ingestion handler called")
+    print("Event received:", json.dumps(event))
     try:
         bucket = event['Records'][0]['s3']['bucket']['name']
         key = event['Records'][0]['s3']['object']['key']

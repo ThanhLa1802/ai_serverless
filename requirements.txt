@@ -1,7 +1,7 @@
-langchain
+langchain==0.1.0
 langchain-google-genai
 langchain-pinecone
 langchain-community
 pypdf
-google-generativeai
+google-genai
 python-dotenv
