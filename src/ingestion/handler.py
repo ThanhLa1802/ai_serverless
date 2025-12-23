@@ -20,14 +20,17 @@ def handler(event, _context):
         
         file_bytes = s3_client.get_object(Bucket=bucket, Key=key)['Body'].read()
 
-        # Bước 1: Trích xuất text (Dùng LangChain Loader)
+        _logger.info(f"File of size {len(file_bytes)} bytes downloaded from S3.")
         parser = PDFParser()
         docs = parser.parse_from_bytes(file_bytes)
+        _logger.info(f"Extracted {len(docs)} pages from the PDF document.")
+        if not docs:
+            raise ValueError("No documents extracted from the PDF.")
         
         # step 2: Split and embed + upload
         service = IngestionService()
         count = service.process_and_upload(docs)
-        
+        _logger.info(f"Uploaded {count} chunks to the vector store.")
         return {
             "statusCode": 200,
             "body": json.dumps({
