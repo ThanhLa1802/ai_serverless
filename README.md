@@ -2,7 +2,8 @@
 
 A **production-ready Serverless Retrieval-Augmented Generation (RAG) system** built on AWS Lambda, API Gateway, Pinecone, and OpenAI. The system allows users to upload documents (PDF) and ask natural language questions via a ChatGPT-like web UI.
 
----
+---<img width="1310" height="580" alt="rag" src="https://github.com/user-attachments/assets/5e465dd7-e0fb-449e-b372-9a6e7ed2eee6" />
+
 
 ## 🚀 Key Features
 
