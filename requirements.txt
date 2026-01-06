@@ -1,8 +1,7 @@
-torch
-openai>=1.0.0
-langchain-groq
-langchain-pinecone
+langgraph
+langchain
+langchain-openai
 langchain-community
-pypdf
-boto3
+faiss-cpu
 python-dotenv
+tiktoken

@@ -1,5 +1,0 @@
-local_run.py
-.env
-.vscode/
-*.pyc
-__pycache__/
