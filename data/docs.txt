@@ -1,0 +1,3 @@
+AWS Lambda is a serverless compute service that runs your code in response to events.
+Amazon S3 is an object storage service that offers industry-leading scalability.
+LangGraph is a framework for building stateful, multi-step LLM workflows using graphs.
