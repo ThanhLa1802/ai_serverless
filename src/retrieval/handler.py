@@ -73,7 +73,7 @@ def handler(event, context):
         best_scores = [float(item[0]) for item in best_results]
 
         # 5. Gen answer
-        answer = answer_generator.generate_answer(query_text, contexts)
+        answer = answer_generator.generate_answer(query_text, best_docs)
 
         # 5. Trả về kết quả
         return {
