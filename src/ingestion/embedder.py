@@ -4,6 +4,7 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from src.common.logger import get_logger
+from sentence_transformers import CrossEncoder
 
 _logger = get_logger(__name__)
 

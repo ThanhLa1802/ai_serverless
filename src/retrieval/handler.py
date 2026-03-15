@@ -3,6 +3,8 @@ import os
 from .search import SearchService
 from .generator import AnswerGenerator
 from src.common.logger import get_logger
+from sentence_transformers import CrossEncoder
+reranker = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
 
 _logger = get_logger(__name__)
 
@@ -52,8 +54,25 @@ def handler(event, context):
                     "sources": []
                 })
             }
+        # 4. Reranking use cross encoder
+        cross_inp = [[query_text, doc] for doc in contexts]
+        
+        # Forecast score
+        scores = reranker.predict(cross_inp)
+        
+        # Ghép điểm số với tài liệu và metadata tương ứng
+        scored_results = list(zip(scores, contexts))
+        
+        # Sắp xếp từ điểm cao nhất xuống thấp nhất
+        scored_results.sort(key=lambda x: x[0], reverse=True)
+        
+        # Chỉ lấy Top K kết quả xuất sắc nhất sau khi rerank
+        best_results = scored_results[:3]
+        
+        best_docs = [item[1] for item in best_results]
+        best_scores = [float(item[0]) for item in best_results]
 
-        # 4. Bước Generation: Dùng gloq để tạo câu trả lời
+        # 5. Gen answer
         answer = answer_generator.generate_answer(query_text, contexts)
 
         # 5. Trả về kết quả
