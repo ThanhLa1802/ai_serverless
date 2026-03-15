@@ -22,7 +22,8 @@ class IngestionService:
 
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=800,
-            chunk_overlap=150
+            chunk_overlap=150,
+            separators=["\n\n", "\n", ".", "!", "?", ",", " ", ""]
         )
 
     def process_and_upload(self, documents):
